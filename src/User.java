@@ -1,9 +1,11 @@
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class User implements Serializable {
 
     private String user_name;
     private String password;
+    private ArrayList<String> friends;
 
 
     public String getPassword() {

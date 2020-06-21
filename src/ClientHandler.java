@@ -54,7 +54,7 @@ public class ClientHandler implements Runnable {
                     }else{
                         User currentUser = Server.users.get(userName);
                         if(!password.equals(currentUser.getPassword())){
-                            dos.writeUTF("ERROR:password is't correct...");
+                            dos.writeUTF("ERROR:password isn't correct...");
                             dos.flush();
                             continue;
                         }
