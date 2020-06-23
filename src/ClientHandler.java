@@ -63,8 +63,16 @@ public class ClientHandler implements Runnable {
                     dos.flush();
                     break;
                 }
-            }else{
+            }else if(purpose.equals("Service")){
+                User current_user = Server.users.get(dis.readUTF());
+                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                oos.writeObject(current_user.getFriends());
+                oos.flush();
+                oos.writeObject(current_user.getChats());
+                oos.flush();
+                while(true){
 
+                }
             }
         } catch (IOException io) {
             io.printStackTrace();

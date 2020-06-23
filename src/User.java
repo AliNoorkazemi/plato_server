@@ -5,7 +5,7 @@ public class User implements Serializable {
 
     private String user_name;
     private String password;
-    private ArrayList<String> friends;
+    private ArrayList<Friend> friends;
 
 
     public String getPassword() {
