@@ -13,6 +13,13 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -55,21 +62,33 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1237" height="292" key="GridCell.Tab.0.bottom" timestamp="1592774878212">
+    <state x="446" y="25" key="#com.intellij.ide.util.MemberChooser" timestamp="1592911539646">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="292" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1592774878212" />
-    <state width="1237" height="292" key="GridCell.Tab.0.center" timestamp="1592774878211">
+    <state x="446" y="25" key="#com.intellij.ide.util.MemberChooser/0.0.1280.680@0.0.1280.680" timestamp="1592911539646" />
+    <state width="1237" height="2" key="GridCell.Tab.0.bottom" timestamp="1593003178850">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="292" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1592774878211" />
-    <state width="1237" height="292" key="GridCell.Tab.0.left" timestamp="1592774878211">
+    <state width="1237" height="2" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1593003178850" />
+    <state width="1237" height="2" key="GridCell.Tab.0.center" timestamp="1593003178849">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="292" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1592774878211" />
-    <state width="1237" height="292" key="GridCell.Tab.0.right" timestamp="1592774878211">
+    <state width="1237" height="2" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1593003178849" />
+    <state width="1237" height="2" key="GridCell.Tab.0.left" timestamp="1593003178848">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="292" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1592774878211" />
+    <state width="1237" height="2" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1593003178848" />
+    <state width="1237" height="2" key="GridCell.Tab.0.right" timestamp="1593003178849">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state width="1237" height="2" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1593003178849" />
+    <state x="297" y="151" key="run.anything.popup" timestamp="1592911968513">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="297" y="151" key="run.anything.popup/0.0.1280.680@0.0.1280.680" timestamp="1592911968513" />
+    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1592928370422">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup/0.0.1280.680@0.0.1280.680" timestamp="1592928370422" />
   </component>
 </project>

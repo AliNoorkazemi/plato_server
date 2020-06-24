@@ -1,5 +1,7 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,6 +10,7 @@ public class ClientHandler implements Runnable {
     private Socket socket;
     private DataOutputStream dos;
     private DataInputStream dis;
+    private String current_userName;
 
 
     ClientHandler(Socket socket) {
@@ -61,21 +64,64 @@ public class ClientHandler implements Runnable {
                     }
                     dos.writeUTF("OK");
                     dos.flush();
+                    Server.usersClientHandler.put(userName,this);
                     break;
                 }
             }else if(purpose.equals("Service")){
-                User current_user = Server.users.get(dis.readUTF());
+                System.out.println("user trying to get service form server ...");
+                current_userName = dis.readUTF();
+                User current_user = Server.users.get(current_userName);
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                oos.writeObject(current_user.getFriends());
+                oos.writeObject(current_user.getFriendName_to_message());
                 oos.flush();
-                oos.writeObject(current_user.getChats());
+                oos.writeObject(current_user.getFriendName_to_messageTime());
+                oos.flush();
+                oos.writeObject(current_user.getFriendsName_to_messageBoolean());
                 oos.flush();
                 while(true){
-
+                    switch(dis.readUTF()){
+                        case "sent": {
+                            String message = dis.readUTF();
+                            String targetName = dis.readUTF();
+                            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                            Date date = (Date) ois.readObject();
+                            dis = new DataInputStream(socket.getInputStream());
+                            User target = Server.users.get(targetName);
+                            if (Server.usersClientHandler.containsKey(targetName)) {
+                                ClientHandler targetHandler = Server.usersClientHandler.get(targetName);
+                                targetHandler.dos.writeUTF("message");
+                                targetHandler.dos.flush();
+                                targetHandler.dos.writeUTF(current_userName);
+                                targetHandler.dos.flush();
+                                targetHandler.dos.writeUTF(message);
+                                targetHandler.dos.flush();
+                                ObjectOutputStream oos_to_target = new ObjectOutputStream(targetHandler.socket.getOutputStream());
+                                oos_to_target.writeObject(date);
+                                oos_to_target.flush();
+                                targetHandler.dos = new DataOutputStream(targetHandler.socket.getOutputStream());
+                            } else {
+                                target.receive_message(message, date, current_userName);
+                            }
+                        }
+                            break;
+                        case "AddFriend":
+                            String targetName = dis.readUTF();
+                            dos.writeUTF("Answer to Add Friend");
+                            dos.flush();
+                            if(!Server.users.containsKey(targetName)){
+                                dos.writeUTF("ERROR");
+                            }else{
+                                dos.writeUTF("OK");
+                            }
+                            dos.flush();
+                            break;
+                    }
                 }
             }
-        } catch (IOException io) {
+        } catch (IOException | ClassNotFoundException io) {
             io.printStackTrace();
         }
+        System.out.println("user disconnected ...");
+//        Server.usersClientHandler.remove(current_userName);
     }
 }
