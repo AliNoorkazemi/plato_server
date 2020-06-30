@@ -8,18 +8,14 @@ public class User implements Serializable {
 
     private String user_name;
     private String password;
-    private Map<String,ArrayList<String>> friendName_to_message ;
-    private Map<String,ArrayList<Date>> friendName_to_messageTime;
-    private Map<String,ArrayList<Boolean>> friendsName_to_messageBoolean;
+    Map<String,ArrayList<String>> friendName_to_message ;
+    Map<String,ArrayList<Date>> friendName_to_messageTime;
+    Map<String,ArrayList<Boolean>> friendsName_to_messageBoolean;
 
     public Map<String, ArrayList<String>> getFriendName_to_message() {
         if(friendName_to_message==null)
             return new ConcurrentHashMap<>();
         return friendName_to_message;
-    }
-
-    public void setFriendName_to_message(Map<String, ArrayList<String>> friendName_to_message) {
-        this.friendName_to_message = friendName_to_message;
     }
 
     public Map<String, ArrayList<Date>> getFriendName_to_messageTime() {
@@ -28,18 +24,10 @@ public class User implements Serializable {
         return friendName_to_messageTime;
     }
 
-    public void setFriendName_to_messageTime(Map<String, ArrayList<Date>> friendName_to_messageTime) {
-        this.friendName_to_messageTime = friendName_to_messageTime;
-    }
-
     public Map<String, ArrayList<Boolean>> getFriendsName_to_messageBoolean() {
         if(friendsName_to_messageBoolean==null)
             return new ConcurrentHashMap<>();
         return friendsName_to_messageBoolean;
-    }
-
-    public void setFriendsName_to_messageBoolean(Map<String, ArrayList<Boolean>> friendsName_to_messageBoolean) {
-        this.friendsName_to_messageBoolean = friendsName_to_messageBoolean;
     }
 
     public String getPassword() {
