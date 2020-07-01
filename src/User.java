@@ -10,7 +10,13 @@ public class User implements Serializable {
     private String password;
     Map<String,ArrayList<String>> friendName_to_message ;
     Map<String,ArrayList<Date>> friendName_to_messageTime;
-    Map<String,ArrayList<Boolean>> friendsName_to_messageBoolean;
+    Map<String,ArrayList<Integer>> friendsName_to_messageType;
+
+    public Map<String, ArrayList<Integer>> getFriendsName_to_messageType() {
+        if(friendsName_to_messageType==null)
+            return new ConcurrentHashMap<>();
+        return friendsName_to_messageType;
+    }
 
     public Map<String, ArrayList<String>> getFriendName_to_message() {
         if(friendName_to_message==null)
@@ -22,12 +28,6 @@ public class User implements Serializable {
         if(friendName_to_messageTime==null)
             return new ConcurrentHashMap<>();
         return friendName_to_messageTime;
-    }
-
-    public Map<String, ArrayList<Boolean>> getFriendsName_to_messageBoolean() {
-        if(friendsName_to_messageBoolean==null)
-            return new ConcurrentHashMap<>();
-        return friendsName_to_messageBoolean;
     }
 
     public String getPassword() {
@@ -50,19 +50,19 @@ public class User implements Serializable {
         if(friendName_to_message==null) {
             friendName_to_message = new ConcurrentHashMap<String, ArrayList<String>>();
             friendName_to_messageTime = new ConcurrentHashMap<String , ArrayList<Date>>();
-            friendsName_to_messageBoolean = new ConcurrentHashMap<String , ArrayList<Boolean>>();
+            friendsName_to_messageType = new ConcurrentHashMap<>();
         }
         if(friendName_to_message.containsKey(sender)){
             friendName_to_message.get(sender).add(message);
             friendName_to_messageTime.get(sender).add(date);
-            friendsName_to_messageBoolean.get(sender).add(true);
+            friendsName_to_messageType.get(sender).add(0);
         }else{
             ArrayList<String> new_message_list = new ArrayList<String>();
             new_message_list.add(message);
             friendName_to_message.put(sender,new_message_list);
-            ArrayList<Boolean> new_boolean_list = new ArrayList<Boolean>();
-            new_boolean_list.add(true);
-            friendsName_to_messageBoolean.put(sender,new_boolean_list);
+            ArrayList<Integer> new_type_list = new ArrayList<>();
+            new_type_list.add(0);
+            friendsName_to_messageType.put(sender,new_type_list);
             ArrayList<Date> new_date_list = new ArrayList<Date>();
             new_date_list.add(date);
             friendName_to_messageTime.put(sender,new_date_list);

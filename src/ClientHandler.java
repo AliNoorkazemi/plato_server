@@ -26,7 +26,6 @@ public class ClientHandler implements Runnable {
         try {
             dos = new DataOutputStream(socket.getOutputStream());
             dis = new DataInputStream(socket.getInputStream());
-            System.out.println(Server.users.keySet());
 
             purpose = dis.readUTF();
 
@@ -49,13 +48,16 @@ public class ClientHandler implements Runnable {
                 case "messageListener":
                     receiveMessage();
                     break;
+                case "offline":
+                    offline();
+                    break;
             }
         } catch (IOException  io) {
             io.printStackTrace();
             System.out.println("user disconnected by crash...");
         }
 
-        System.out.println("user disconnected ... ");
+        System.out.println("purpose done ... ");
     }
 
     /*
@@ -63,7 +65,6 @@ public class ClientHandler implements Runnable {
      */
 
     private void register(){
-        System.out.println("user is trying to registering...");
         try {
             while (true) {
                 String message = dis.readUTF();
@@ -114,7 +115,6 @@ public class ClientHandler implements Runnable {
 
     private void giveData(){
         try {
-            System.out.println("user trying to get data form server ...");
             String current_userName = dis.readUTF();
             User current_user = Server.users.get(current_userName);
             System.out.println(current_user.getFriendName_to_message().keySet());
@@ -123,7 +123,7 @@ public class ClientHandler implements Runnable {
             oos.flush();
             oos.writeObject(current_user.getFriendName_to_messageTime());
             oos.flush();
-            oos.writeObject(current_user.getFriendsName_to_messageBoolean());
+            oos.writeObject(current_user.getFriendsName_to_messageType());
             oos.flush();
         }catch (IOException io){
             io.printStackTrace();
@@ -131,7 +131,6 @@ public class ClientHandler implements Runnable {
     }
 
     private void addFriend(){
-        System.out.println("user try to add friend...");
         try{
             String targetName = dis.readUTF();
             if (!Server.users.containsKey(targetName)) {
@@ -144,11 +143,11 @@ public class ClientHandler implements Runnable {
                 if(user.friendName_to_message==null){
                     user.friendName_to_message = new ConcurrentHashMap<>();
                     user.friendName_to_messageTime = new ConcurrentHashMap<>();
-                    user.friendsName_to_messageBoolean = new ConcurrentHashMap<>();
+                    user.friendsName_to_messageType = new ConcurrentHashMap<>();
                 }
                 user.friendName_to_message.put(targetName,new ArrayList<String>());
                 user.friendName_to_messageTime.put(targetName,new ArrayList<Date>());
-                user.friendsName_to_messageBoolean.put(targetName,new ArrayList<Boolean>());
+                user.friendsName_to_messageType.put(targetName,new ArrayList<Integer>());
             }
         }catch (IOException io){
             io.printStackTrace();
@@ -176,7 +175,7 @@ public class ClientHandler implements Runnable {
                 System.out.println("message sent to online user ...");
             }
             Server.users.get(target_name).receive_message(message,time,current_name);
-            Server.users.get(current_name).friendsName_to_messageBoolean.get(target_name).add(false);
+            Server.users.get(current_name).friendsName_to_messageType.get(target_name).add(1);
             Server.users.get(current_name).friendName_to_messageTime.get(target_name).add(time);
             Server.users.get(current_name).friendName_to_message.get(target_name).add(message);
         }catch (IOException | ClassNotFoundException io){
@@ -185,13 +184,24 @@ public class ClientHandler implements Runnable {
     }
 
     private void receiveMessage(){
+        String current_username="";
         try {
-            String current_username = dis.readUTF();
+            current_username = dis.readUTF();
             Server.usersClientHandler.put(current_username,this);
-            System.out.println("message listening started....");
             while (true) {
-
+                if(socket.isClosed())
+                    break;
             }
+        }catch (IOException io){
+            io.printStackTrace();
+        }
+    }
+
+    private void offline(){
+        try{
+            String name = dis.readUTF();
+            Server.usersClientHandler.get(name).socket.close();
+            Server.usersClientHandler.remove(name);
         }catch (IOException io){
             io.printStackTrace();
         }
