@@ -1,9 +1,6 @@
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -21,7 +18,7 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
 
-        String purpose="";
+        String purpose = "";
 
         try {
             dos = new DataOutputStream(socket.getOutputStream());
@@ -49,8 +46,14 @@ public class ClientHandler implements Runnable {
                 case "messageListener":
                     receiveMessage();
                     break;
+                case "game":
+                    game();
+                    break;
+                case "addRoomListener":
+                    addRoomListener();
+                    break;
             }
-        } catch (IOException  io) {
+        } catch (IOException io) {
             io.printStackTrace();
             System.out.println("user disconnected by crash...");
         }
@@ -58,11 +61,83 @@ public class ClientHandler implements Runnable {
         System.out.println("user disconnected ... ");
     }
 
+    private void addRoomListener() {
+        try {
+            String current_username = dis.readUTF();
+            Server.usersClientHandlerInGame.put(current_username, this);
+            System.out.println("room Change listening started....");
+            while (true) {
+
+            }
+        } catch (IOException io) {
+            io.printStackTrace();
+        }
+    }
+
+    private void game() {
+        System.out.println("user is trying connect to game part...");
+        try {
+            String purpose_in_game_part = dis.readUTF();
+            switch (purpose_in_game_part) {
+                case "getAllRooms":
+                    String which_game = dis.readUTF();
+
+                    Room roomMap = Server.rooms.get(which_game);
+                    ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+
+                    oos.writeObject(roomMap.getRoomName_to_joined_user());
+                    oos.writeObject(roomMap.getRoomName_to_maxPlayer());
+
+                    break;
+                case "addRoom":
+                    String whichGame = dis.readUTF();
+
+
+                    String roomName = dis.readUTF();
+
+                    if (Server.rooms.get(whichGame).getRoomName_to_maxPlayer().containsKey(roomName))
+                        dos.writeBoolean(false);
+
+                    else {
+                        dos.writeBoolean(true);
+                        Integer maxPlayers = Integer.valueOf(dis.readUTF());
+                        String joined_user = dis.readUTF();
+                        ArrayList<String> userList = new ArrayList<>();
+                        userList.add(joined_user);
+
+                        Server.rooms.get(whichGame).getRoomName_to_joined_user().put(roomName, userList);
+                        Server.rooms.get(whichGame).getRoomName_to_maxPlayer().put(roomName, maxPlayers);
+
+                        for (String user : Server.usersClientHandler.keySet()) {
+                            ClientHandler target = Server.usersClientHandlerInGame.get(user);
+
+                            target.dos.writeUTF(whichGame);
+                            target.dos.flush();
+                            target.dos.writeUTF(roomName);
+                            target.dos.flush();
+                            target.dos.writeUTF(userList.get(0));
+                            target.dos.flush();
+                            target.dos.writeUTF(String.valueOf(maxPlayers));
+                            target.dos.flush();
+                        }
+
+                    }
+
+                    break;
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     /*
         methods which use in switch run method of client handler.
      */
 
-    private void register(){
+    private void register() {
         System.out.println("user is trying to registering...");
         try {
             while (true) {
@@ -78,15 +153,15 @@ public class ClientHandler implements Runnable {
                     dos.flush();
                 }
             }
-        }catch (IOException io){
+        } catch (IOException io) {
             io.printStackTrace();
         }
     }
 
-    private void login(){
+    private void login() {
         System.out.println("user trying to logging in");
-        String userName ;
-        String password ;
+        String userName;
+        String password;
         try {
             while (true) {
                 userName = dis.readUTF();
@@ -107,12 +182,12 @@ public class ClientHandler implements Runnable {
                 dos.flush();
                 break;
             }
-        }catch (IOException io){
+        } catch (IOException io) {
             io.printStackTrace();
         }
     }
 
-    private void giveData(){
+    private void giveData() {
         try {
             System.out.println("user trying to get data form server ...");
             String current_userName = dis.readUTF();
@@ -125,14 +200,14 @@ public class ClientHandler implements Runnable {
             oos.flush();
             oos.writeObject(current_user.getFriendsName_to_messageBoolean());
             oos.flush();
-        }catch (IOException io){
+        } catch (IOException io) {
             io.printStackTrace();
         }
     }
 
-    private void addFriend(){
+    private void addFriend() {
         System.out.println("user try to add friend...");
-        try{
+        try {
             String targetName = dis.readUTF();
             if (!Server.users.containsKey(targetName)) {
                 dos.writeUTF("ERROR");
@@ -141,30 +216,32 @@ public class ClientHandler implements Runnable {
                 dos.writeUTF("OK");
                 dos.flush();
                 User user = Server.users.get(dis.readUTF());
-                if(user.friendName_to_message==null){
+                if (user.friendName_to_message == null) {
                     user.friendName_to_message = new ConcurrentHashMap<>();
                     user.friendName_to_messageTime = new ConcurrentHashMap<>();
                     user.friendsName_to_messageBoolean = new ConcurrentHashMap<>();
                 }
-                user.friendName_to_message.put(targetName,new ArrayList<String>());
-                user.friendName_to_messageTime.put(targetName,new ArrayList<Date>());
-                user.friendsName_to_messageBoolean.put(targetName,new ArrayList<Boolean>());
+                user.friendName_to_message.put(targetName, new ArrayList<String>());
+                user.friendName_to_messageTime.put(targetName, new ArrayList<Date>());
+                user.friendsName_to_messageBoolean.put(targetName, new ArrayList<Boolean>());
             }
-        }catch (IOException io){
+        } catch (IOException io) {
             io.printStackTrace();
         }
     }
 
-    private void sendMessage(){
+    private void sendMessage() {
         System.out.println("user try to send a message ...");
         try {
             String current_name = dis.readUTF();
             String target_name = dis.readUTF();
             String message = dis.readUTF();
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            Date time = (Date)ois.readObject();
-            if(Server.usersClientHandler.containsKey(target_name)){
+            Date time = (Date) ois.readObject();
+            if (Server.usersClientHandler.containsKey(target_name)) {
                 ClientHandler target = Server.usersClientHandler.get(target_name);
+                target.dos.writeUTF("message");
+                target.dos.flush();
                 target.dos.writeUTF(current_name);
                 target.dos.flush();
                 target.dos.writeUTF(message);
@@ -175,24 +252,24 @@ public class ClientHandler implements Runnable {
                 target.dis = new DataInputStream(target.socket.getInputStream());
                 System.out.println("message sent to online user ...");
             }
-            Server.users.get(target_name).receive_message(message,time,current_name);
+            Server.users.get(target_name).receive_message(message, time, current_name);
             Server.users.get(current_name).friendsName_to_messageBoolean.get(target_name).add(false);
             Server.users.get(current_name).friendName_to_messageTime.get(target_name).add(time);
             Server.users.get(current_name).friendName_to_message.get(target_name).add(message);
-        }catch (IOException | ClassNotFoundException io){
+        } catch (IOException | ClassNotFoundException io) {
             io.printStackTrace();
         }
     }
 
-    private void receiveMessage(){
+    private void receiveMessage() {
         try {
             String current_username = dis.readUTF();
-            Server.usersClientHandler.put(current_username,this);
+            Server.usersClientHandler.put(current_username, this);
             System.out.println("message listening started....");
             while (true) {
 
             }
-        }catch (IOException io){
+        } catch (IOException io) {
             io.printStackTrace();
         }
     }
