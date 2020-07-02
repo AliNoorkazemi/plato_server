@@ -8,7 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Server {
 
     static Map<String, ClientHandler> usersClientHandler = new ConcurrentHashMap<>();
-    static Map<String, ClientHandler> usersClientHandlerInGame = new ConcurrentHashMap<>();
+    static Map<String, ClientHandler> usersClientHandlerInGameUpdate = new ConcurrentHashMap<>();
+    static Map<String, ClientHandler> usersClientHandlerInGameAdd = new ConcurrentHashMap<>();
     static Map<String, User> users = new ConcurrentHashMap<>();
     static Map<String,Room> rooms=new ConcurrentHashMap<>();// <gamename,room>
     public static void main(String[] args) {
