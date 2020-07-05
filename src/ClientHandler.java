@@ -56,6 +56,13 @@ public class ClientHandler implements Runnable {
                 case "offline":
                     offline();
                     break;
+                case "XoListener":
+                    Xolistener();
+                    break;
+                case "XoSendData":
+                    XoSendData();
+                    break;
+
             }
         } catch (IOException io) {
             io.printStackTrace();
@@ -63,6 +70,28 @@ public class ClientHandler implements Runnable {
         }
 
         System.out.println("purpose done ... ");
+    }
+
+    private void XoSendData() throws IOException {
+        String targetName = dis.readUTF();
+        int index = dis.readInt();
+
+        ClientHandler clientHandler = Server.xoClientHandler.get(targetName);
+        clientHandler.dos.writeInt(index);
+        clientHandler.dos.flush();
+    }
+
+    private void Xolistener() {
+        try {
+            String current_username = dis.readUTF();
+            Server.xoClientHandler.put(current_username, this);
+            System.out.println("xo game listening started....");
+            while (true) {
+
+            }
+        } catch (IOException io) {
+            io.printStackTrace();
+        }
     }
 
     private void AddRoom() {
@@ -144,26 +173,37 @@ public class ClientHandler implements Runnable {
                     break;
                 case "update":
                     System.out.println("user is in update...");
-                    String purpose_in_update = dis.readUTF();
-                    switch (purpose_in_update) {
-                        case "change":
-                            System.out.println("user in change...");
-                            String room_name = dis.readUTF();
-                            String user_thats_want_to_join = dis.readUTF();
-                            Server.rooms.get(whichGame).getRoomName_to_joined_user().get(room_name).add(user_thats_want_to_join);
-                            for (String username : Server.usersClientHandlerInGameUpdate.keySet()
-                            ) {
-                                ClientHandler target = Server.usersClientHandlerInGameUpdate.get(username);
-                                target.dos.writeUTF(whichGame);
-                                target.dos.flush();
-                                target.dos.writeUTF(room_name);
-                                target.dos.flush();
-                                target.dos.writeUTF(user_thats_want_to_join);
-                                target.dos.flush();
-                                System.out.println("change in " + username);
-                            }
-                            break;
+                    String room_name = dis.readUTF();
+                    String user_thats_want_to_join = dis.readUTF();
+                    Server.rooms.get(whichGame).getRoomName_to_joined_user().get(room_name).add(user_thats_want_to_join);
+                    for (String username : Server.usersClientHandlerInGameUpdate.keySet()
+                    ) {
+                        ClientHandler target = Server.usersClientHandlerInGameUpdate.get(username);
+                        target.dos.writeUTF(whichGame);
+                        target.dos.flush();
+                        target.dos.writeUTF(room_name);
+                        target.dos.flush();
+                        target.dos.writeUTF(user_thats_want_to_join);
+                        target.dos.flush();
                     }
+
+                    break;
+                case "removeRoom":
+                    String room_name_removed = dis.readUTF();
+                    Server.rooms.get(whichGame).getRoomName_to_joined_user().remove(room_name_removed);
+                    Server.rooms.get(whichGame).getRoomName_to_maxPlayer().remove(room_name_removed);
+
+                    for (String username : Server.usersClientHandlerInGameUpdate.keySet()
+                    ) {
+                        ClientHandler target = Server.usersClientHandlerInGameUpdate.get(username);
+                        target.dos.writeUTF(whichGame);
+                        target.dos.flush();
+                        target.dos.writeUTF(room_name_removed);
+                        target.dos.flush();
+                        target.dos.writeUTF("remove");
+                        target.dos.flush();
+                    }
+
                     break;
 
             }
