@@ -72,6 +72,7 @@ public class ClientHandler implements Runnable {
         System.out.println("purpose done ... ");
     }
 
+
     private void XoSendData() throws IOException {
         String targetName = dis.readUTF();
         int index = dis.readInt();
@@ -227,6 +228,19 @@ public class ClientHandler implements Runnable {
                     User newUser = new User();
                     newUser.setUser_name(dis.readUTF());
                     newUser.setPassword(dis.readUTF());
+
+                    int length=dis.readInt();
+                    byte[] arr = new byte[length];
+
+                    for (int i = 0; i < length; i++) {
+                        arr[i]=dis.readByte();
+                    }
+                    //ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    //baos.write(arr, 0, dis.read(arr));
+
+                    newUser.setProfile(arr);
+
+
                     Server.users.put(newUser.getUser_name(), newUser);
                     break;
                 } else if (Server.users.containsKey(message)) {
@@ -261,6 +275,13 @@ public class ClientHandler implements Runnable {
                 }
                 dos.writeUTF("OK");
                 dos.flush();
+                byte[] array=Server.users.get(userName).getProfile();
+                dos.writeInt(array.length);
+                dos.flush();
+                for (int i = 0; i < array.length; i++) {
+                    dos.writeByte(array[i]);
+                    dos.flush();
+                }
                 break;
             }
         } catch (IOException io) {

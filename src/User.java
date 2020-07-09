@@ -8,6 +8,16 @@ public class User implements Serializable {
 
     private String user_name;
     private String password;
+    private byte[] profile;
+
+    public byte[] getProfile() {
+        return profile;
+    }
+
+    public void setProfile(byte[] profile) {
+        this.profile = profile;
+    }
+
     Map<String,ArrayList<String>> friendName_to_message ;
     Map<String,ArrayList<Date>> friendName_to_messageTime;
     Map<String,ArrayList<Integer>> friendsName_to_messageType;
