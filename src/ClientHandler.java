@@ -62,6 +62,15 @@ public class ClientHandler implements Runnable {
                 case "XoSendData":
                     XoSendData();
                     break;
+                case "guess word listener":
+                    guess_word_listener();
+                    break;
+                case "guess word send data":
+                    guess_word_send_data();
+                    break;
+                case "listening round two":
+                    guess_word_round_two_listener();
+                    break;
 
             }
         } catch (IOException io) {
@@ -72,6 +81,56 @@ public class ClientHandler implements Runnable {
         System.out.println("purpose done ... ");
     }
 
+    private void guess_word_round_two_listener(){
+        String current_username = "";
+        try{
+            current_username = dis.readUTF();
+            Server.guesswordClientHandler.put(current_username,this);
+            while (true){
+                if( dis.readUTF().equals("exit"))
+                    break;
+            }
+        }catch (IOException io){
+            io.printStackTrace();
+        }finally {
+            Server.guesswordClientHandler.remove(current_username);
+            System.out.println();
+        }
+    }
+
+    private void guess_word_send_data(){
+        try {
+            String targetName = dis.readUTF();
+            String word = dis.readUTF();
+            ClientHandler clientHandler = Server.guesswordClientHandler.get(targetName);
+            clientHandler.dos.writeUTF(word);
+            clientHandler.dos.flush();
+            while (true){
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void guess_word_listener(){
+        String current_user_name = "";
+        try{
+            current_user_name = dis.readUTF();
+            Server.guesswordClientHandler.put(current_user_name,this);
+            System.out.println("guess word listening started....");
+            String opponent = dis.readUTF();
+            String result = dis.readUTF();
+            ClientHandler clientHandler = Server.guesswordClientHandler.get(opponent);
+            clientHandler.dos.writeUTF(result);
+        }catch (IOException io){
+            io.printStackTrace();
+        }finally {
+            Server.guesswordClientHandler.remove(current_user_name);
+            System.out.println("guess word listening finished ...");
+        }
+    }
 
     private void XoSendData() throws IOException {
         String targetName = dis.readUTF();
@@ -126,6 +185,7 @@ public class ClientHandler implements Runnable {
         try {
             String purpose_in_game_part = dis.readUTF();
             String whichGame = dis.readUTF();
+            System.out.println(whichGame);
             switch (purpose_in_game_part) {
                 case "getAllRooms":
 
