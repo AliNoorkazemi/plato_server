@@ -1,8 +1,9 @@
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Server {
@@ -11,6 +12,7 @@ public class Server {
     static Map<String, ClientHandler> usersClientHandlerInGameUpdate = new ConcurrentHashMap<>();
     static Map<String, ClientHandler> usersClientHandlerInGameAdd = new ConcurrentHashMap<>();
     static Map<String, ClientHandler> xoClientHandler = new ConcurrentHashMap<>();
+    static Map<String , ClientHandler> guesswordClientHandler = new ConcurrentHashMap<>();
     static Map<String, User> users = new ConcurrentHashMap<>();
     static Map<String,Room> rooms=new ConcurrentHashMap<>();// <gamename,room>
     public static void main(String[] args) {
@@ -30,6 +32,7 @@ public class Server {
 
 
             rooms.put("xo",new Room());
+            rooms.put("guess word",new Room());
 
             while (true) {
                 Socket socket = serverSocket.accept();
