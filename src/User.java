@@ -9,6 +9,29 @@ public class User implements Serializable {
     private String user_name;
     private String password;
     private byte[] profile;
+    private ArrayList<Integer> gameScore;
+
+    public User(){
+        gameScore=new ArrayList<>();
+        gameScore.add(0);
+        gameScore.add(0);
+        gameScore.add(0);
+    }
+
+    public void setGameScore(ArrayList<Integer> gameScore) {
+        this.gameScore = gameScore;
+    }
+
+    public ArrayList<Integer> getGameScore() {
+        if(gameScore==null){
+            gameScore=new ArrayList<>();
+            gameScore.add(10);
+            gameScore.add(0);
+            gameScore.add(0);
+        }
+        return gameScore;
+    }
+
 
     public byte[] getProfile() {
         return profile;
