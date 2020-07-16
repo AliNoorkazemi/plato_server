@@ -161,7 +161,16 @@ public class ClientHandler implements Runnable {
             String opponent = dis.readUTF();
             String result = dis.readUTF();
             ClientHandler clientHandler = Server.guesswordClientHandler.get(opponent);
-            clientHandler.dos.writeUTF(result);
+            if ( result.equals("win"))
+                clientHandler.dos.writeUTF("lose");
+            else if ( result.equals("lose"))
+                clientHandler.dos.writeUTF("win");
+            String message = dis.readUTF();
+            if ( !message.equals("does not roomname")) {
+                Server.rooms.get("guess word").getRoomName_to_joined_user().remove(message);
+                Server.rooms.get("guess word").getRoomName_to_maxPlayer().remove(message);
+                System.out.println("room deleted...");
+            }
         }catch (IOException io){
             io.printStackTrace();
         }finally {
