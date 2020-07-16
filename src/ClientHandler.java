@@ -71,6 +71,9 @@ public class ClientHandler implements Runnable {
                 case "listening round two":
                     guess_word_round_two_listener();
                     break;
+                case "change profile":
+                    change_profile();
+                    break;
 
             }
         } catch (IOException io) {
@@ -79,6 +82,41 @@ public class ClientHandler implements Runnable {
         }
 
         System.out.println("purpose done ... ");
+    }
+
+    private void change_profile(){
+        try{
+            String current_username = dis.readUTF();
+            dos.writeUTF(Server.users.get(current_username).getPassword());
+            dos.flush();
+            System.out.println("profile are listening ... ");
+            while (true){
+                String new_username = dis.readUTF();
+                String new_password = dis.readUTF();
+                if(Server.users.containsKey(new_username) && ! new_username.equals(current_username)){
+                    dos.writeUTF("error");
+                    dos.flush();
+                    continue;
+                }else{
+                    dos.writeUTF("ok");
+                    dos.flush();
+                    User changed_user = Server.users.get(current_username);
+                    Server.usersClientHandler.remove(current_username);
+                    Server.users.values().stream()
+                            .filter((user)-> user.getFriendName_to_message().containsKey(current_username))
+                            .forEach((user)->{user.getFriendName_to_message().put(new_username,user.getFriendName_to_message().remove(current_username));
+                            user.getFriendName_to_messageTime().put(new_username,user.getFriendName_to_messageTime().remove(current_username));
+                            user.getFriendsName_to_messageType().put(new_username,user.getFriendsName_to_messageType().remove(current_username));});
+                    changed_user.setUser_name(new_username);
+                    changed_user.setPassword(new_password);
+                    Server.users.remove(current_username);
+                    Server.users.put(new_username,changed_user);
+                    break;
+                }
+            }
+        }catch (IOException io){
+            io.printStackTrace();
+        }
     }
 
     private void guess_word_round_two_listener(){
@@ -306,6 +344,9 @@ public class ClientHandler implements Runnable {
                 } else if (Server.users.containsKey(message)) {
                     dos.writeUTF("Duplicated");
                     dos.flush();
+                }else{
+                    dos.writeUTF("ok");
+                    dos.flush();
                 }
             }
         } catch (IOException io) {
@@ -401,8 +442,6 @@ public class ClientHandler implements Runnable {
             Date time = (Date) ois.readObject();
             if (Server.usersClientHandler.containsKey(target_name)) {
                 ClientHandler target = Server.usersClientHandler.get(target_name);
-                target.dos.writeUTF("message");
-                target.dos.flush();
                 target.dos.writeUTF(current_name);
                 target.dos.flush();
                 target.dos.writeUTF(message);
@@ -428,6 +467,7 @@ public class ClientHandler implements Runnable {
         try {
             current_username = dis.readUTF();
             Server.usersClientHandler.put(current_username, this);
+            System.out.println("message listening started....");
             while (true) {
                 if (socket.isClosed())
                     break;
