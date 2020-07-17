@@ -161,6 +161,7 @@ public class ClientHandler implements Runnable {
             String opponent = dis.readUTF();
             String result = dis.readUTF();
             ClientHandler clientHandler = Server.guesswordClientHandler.get(opponent);
+            System.out.println(result);
             if ( result.equals("win"))
                 clientHandler.dos.writeUTF("lose");
             else if ( result.equals("lose"))
