@@ -8,6 +8,8 @@ public class ClientHandler implements Runnable {
     private Socket socket;
     private DataOutputStream dos;
     private DataInputStream dis;
+    public User user;
+    public boolean is_rankedGame_started = false;
 
 
     ClientHandler(Socket socket) {
@@ -74,6 +76,15 @@ public class ClientHandler implements Runnable {
                 case "change profile":
                     change_profile();
                     break;
+                case "changeGameScore":
+                    changeGameScore();
+                    break;
+                case "searchForRankedGame":
+                    searchForRankedGame();
+                    break;
+                case "removePlayerFromRankedGame":
+                    removePlayerFromRankedGame();
+                    break;
 
             }
         } catch (IOException io) {
@@ -119,31 +130,101 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void guess_word_round_two_listener(){
+    private void removePlayerFromRankedGame() {
+        try {
+            int whichGame = dis.readInt();
+            Map<String, ClientHandler> thisRankedMap = Server.rankedMapContainer.get(whichGame);
+            String player=dis.readUTF();
+            thisRankedMap.remove(player);
+            System.out.println("re: "+player+" "+ thisRankedMap.size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void searchForRankedGame() {
+        try {
+            System.out.println("user is looking for rankedGame...");
+            int whichGame = Integer.parseInt(dis.readUTF());
+            int score = Integer.parseInt(dis.readUTF());
+            String username = dis.readUTF();
+            Map<String, ClientHandler> thisRankedMap = Server.rankedMapContainer.get(whichGame);
+            System.out.println("se: "+ thisRankedMap.size());
+            //search for a player who is waiting for play RankedGame...
+            for (String name : thisRankedMap.keySet()
+            ) {
+                ClientHandler clientHandler = thisRankedMap.get(name);
+                int opponent_score = Server.users.get(name).getGameScore().get(whichGame);
+                if (opponent_score >= score - 50 && opponent_score <= 50 + score) {
+                    dos.writeUTF("startRankedGamePlayer2");
+                    dos.flush();
+                    dos.writeUTF(name);
+                    clientHandler.dos.writeUTF("startRankedGamePlayer1");
+                    clientHandler.dos.flush();
+                    clientHandler.dos.writeUTF(username);
+                    clientHandler.dos.flush();
+                    clientHandler.is_rankedGame_started = true;
+                    return;
+                }
+
+            }
+
+
+            dos.writeUTF("wait");
+            dos.flush();
+            //add this user to waiting rankedGame queue
+            thisRankedMap.put(username, this);
+            while (!is_rankedGame_started) {
+                String str=dis.readUTF();
+                if(str.equals("cancel")){
+                    thisRankedMap.remove(username);
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void changeGameScore() {
+        try {
+            String username = dis.readUTF();
+            User user = Server.users.get(username);
+            int gameIndex = dis.readInt();
+            int score = dis.readInt();
+            user.getGameScore().set(gameIndex, score);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void guess_word_round_two_listener() {
         String current_username = "";
-        try{
+        try {
             current_username = dis.readUTF();
-            Server.guesswordClientHandler.put(current_username,this);
-            while (true){
-                if( dis.readUTF().equals("exit"))
+            Server.guesswordClientHandler.put(current_username, this);
+            while (true) {
+                if (dis.readUTF().equals("exit"))
                     break;
             }
-        }catch (IOException io){
+        } catch (IOException io) {
             io.printStackTrace();
-        }finally {
+        } finally {
             Server.guesswordClientHandler.remove(current_username);
             System.out.println();
         }
     }
 
-    private void guess_word_send_data(){
+    private void guess_word_send_data() {
         try {
             String targetName = dis.readUTF();
             String word = dis.readUTF();
             ClientHandler clientHandler = Server.guesswordClientHandler.get(targetName);
             clientHandler.dos.writeUTF(word);
             clientHandler.dos.flush();
-            while (true){
+            while (true) {
 
             }
         } catch (IOException e) {
@@ -152,11 +233,11 @@ public class ClientHandler implements Runnable {
     }
 
 
-    private void guess_word_listener(){
+    private void guess_word_listener() {
         String current_user_name = "";
-        try{
+        try {
             current_user_name = dis.readUTF();
-            Server.guesswordClientHandler.put(current_user_name,this);
+            Server.guesswordClientHandler.put(current_user_name, this);
             System.out.println("guess word listening started....");
             String opponent = dis.readUTF();
             String result = dis.readUTF();
@@ -168,7 +249,7 @@ public class ClientHandler implements Runnable {
                 clientHandler.dos.writeUTF("win");
         }catch (IOException io){
             io.printStackTrace();
-        }finally {
+        } finally {
             Server.guesswordClientHandler.remove(current_user_name);
             System.out.println("guess word listening finished ...");
         }
@@ -330,12 +411,13 @@ public class ClientHandler implements Runnable {
                     User newUser = new User();
                     newUser.setUser_name(dis.readUTF());
                     newUser.setPassword(dis.readUTF());
+                    user = newUser;
 
-                    int length=dis.readInt();
+                    int length = dis.readInt();
                     byte[] arr = new byte[length];
 
                     for (int i = 0; i < length; i++) {
-                        arr[i]=dis.readByte();
+                        arr[i] = dis.readByte();
                     }
                     //ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     //baos.write(arr, 0, dis.read(arr));
@@ -380,7 +462,8 @@ public class ClientHandler implements Runnable {
                 }
                 dos.writeUTF("OK");
                 dos.flush();
-                byte[] array=Server.users.get(userName).getProfile();
+                this.user = Server.users.get(userName);
+                byte[] array = Server.users.get(userName).getProfile();
                 dos.writeInt(array.length);
                 dos.flush();
                 for (int i = 0; i < array.length; i++) {
@@ -405,6 +488,8 @@ public class ClientHandler implements Runnable {
             oos.writeObject(current_user.getFriendName_to_messageTime());
             oos.flush();
             oos.writeObject(current_user.getFriendsName_to_messageType());
+            oos.flush();
+            oos.writeObject(current_user.getGameScore());
             oos.flush();
         } catch (IOException io) {
             io.printStackTrace();

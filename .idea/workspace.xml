@@ -4,7 +4,15 @@
     <list default="true" id="8a8c5fdb-7a09-4513-9322-aac6b9c1c794" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Plato_Server/ClientHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Plato_Server/ClientHandler.class" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/src/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientHandler.java" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/out/production/Plato_Server/Server.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Plato_Server/Server.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Plato_Server/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Plato_Server/User.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/User.java" afterDir="false" />
+>>>>>>> 4b7d1053a23e815b3dfdca91a3d1a6e892a7d222
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,10 +72,11 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="535" y="30" key="#com.intellij.ide.util.MemberChooser" timestamp="1593980286146">
+    <state x="535" y="30" key="#com.intellij.ide.util.MemberChooser" timestamp="1594836212934">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="446" y="25" key="#com.intellij.ide.util.MemberChooser/0.0.1280.680@0.0.1280.680" timestamp="1592911539646" />
+<<<<<<< HEAD
     <state x="535" y="30" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1593980286146" />
     <state x="421" y="96" key="FileChooserDialogImpl" timestamp="1594884569685">
       <screen x="0" y="0" width="1280" height="680" />
@@ -98,17 +107,50 @@
     </state>
     <state x="460" y="63" key="RollbackChangesDialog/0.0.1280.680@0.0.1280.680" timestamp="1594929117099" />
     <state x="477" y="240" key="com.intellij.ide.util.TipDialog" timestamp="1594292532696">
+=======
+    <state x="535" y="30" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1594836212934" />
+    <state x="421" y="96" key="FileChooserDialogImpl" timestamp="1594732791448">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="421" y="96" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1594732791448" />
+    <state width="1493" height="211" key="GridCell.Tab.0.bottom" timestamp="1594938001721">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="477" y="240" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1594292532696" />
+    <state width="1237" height="251" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1594819416533" />
+    <state width="1493" height="211" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1594938001721" />
+    <state width="1493" height="211" key="GridCell.Tab.0.center" timestamp="1594938001721">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1237" height="251" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1594819416533" />
+    <state width="1493" height="211" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1594938001721" />
+    <state width="1493" height="211" key="GridCell.Tab.0.left" timestamp="1594938001721">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1237" height="251" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1594819416533" />
+    <state width="1493" height="211" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1594938001721" />
+    <state width="1493" height="211" key="GridCell.Tab.0.right" timestamp="1594938001721">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1237" height="251" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1594819416533" />
+    <state width="1493" height="211" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1594938001721" />
+    <state x="460" y="63" key="RollbackChangesDialog" timestamp="1594728933274">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="460" y="63" key="RollbackChangesDialog/0.0.1280.680@0.0.1280.680" timestamp="1594728933274" />
+    <state x="477" y="240" key="com.intellij.ide.util.TipDialog" timestamp="1594926773617">
+>>>>>>> 4b7d1053a23e815b3dfdca91a3d1a6e892a7d222
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="477" y="240" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1594926773617" />
     <state x="336" y="72" width="612" height="536" key="find.popup" timestamp="1594761062034">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="336" y="72" width="612" height="536" key="find.popup/0.0.1280.680@0.0.1280.680" timestamp="1594761062034" />
-    <state x="297" y="151" key="run.anything.popup" timestamp="1592911968513">
-      <screen x="0" y="0" width="1280" height="680" />
+    <state x="356" y="183" key="run.anything.popup" timestamp="1594848321152">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="297" y="151" key="run.anything.popup/0.0.1280.680@0.0.1280.680" timestamp="1592911968513" />
+    <state x="356" y="183" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1594848321152" />
     <state x="364" y="1" width="807" height="822" key="search.everywhere.popup" timestamp="1593980224594">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
