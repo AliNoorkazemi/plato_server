@@ -4,7 +4,9 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Server {
@@ -17,6 +19,7 @@ public class Server {
     static Map<String, ClientHandler> guesswordClientHandler = new ConcurrentHashMap<>();
     static Map<String, User> users = new ConcurrentHashMap<>();
     static Map<String, Room> rooms = new ConcurrentHashMap<>();// <gamename,room>
+    static Map<String,BestPlayerMapContainer> bestPlayerMapContainerMap =new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
 
@@ -44,6 +47,32 @@ public class Server {
             rankedMapContainer.add(xoRankedClientHandler);
             rankedMapContainer.add(guesswordRankedClientHandler);
             rankedMapContainer.add(dotAndBoxRankedClientHandler);
+
+
+            //test
+            Map<String,Integer> name_score=new HashMap<>();
+            Map<String,Integer> name_ranked=new HashMap<>();
+            Map<String,byte[]> name_image=new HashMap<>();
+
+            name_score.put("Ali",65);
+            name_score.put("javad",55);
+            name_score.put("mohammad",50);
+            name_score.put("reza",40);
+            name_score.put("nahid",30);
+
+            name_ranked.put("Ali",1);
+            name_ranked.put("javad",2);
+            name_ranked.put("mohammad",3);
+            name_ranked.put("reza",4);
+            name_ranked.put("nahid",5);
+
+            BestPlayerMapContainer bestPlayerMapContainerXo=new BestPlayerMapContainer();
+            bestPlayerMapContainerXo.setName_score(name_score);
+            bestPlayerMapContainerXo.setName_ranked(name_score);
+            bestPlayerMapContainerXo.setName_image(name_image);
+            bestPlayerMapContainerMap.put("xo",bestPlayerMapContainerXo);
+            bestPlayerMapContainerMap.put("guess word",bestPlayerMapContainerXo);
+            bestPlayerMapContainerMap.put("dotAndBox",bestPlayerMapContainerXo);
 
 
             while (true) {

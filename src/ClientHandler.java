@@ -85,6 +85,12 @@ public class ClientHandler implements Runnable {
                 case "removePlayerFromRankedGame":
                     removePlayerFromRankedGame();
                     break;
+                case "getBestPlayer":
+                    getBestPlayer();
+                    break;
+                case "changeBestPlayer":
+                    changeBestPlayer();
+                    break;
 
             }
         } catch (IOException io) {
@@ -93,6 +99,30 @@ public class ClientHandler implements Runnable {
         }
 
         System.out.println("purpose done ... ");
+    }
+
+    private void changeBestPlayer() {
+
+    }
+
+    private void getBestPlayer() {
+        try {
+            String whichGame=dis.readUTF();
+
+            BestPlayerMapContainer bestPlayerMapContainer=Server.bestPlayerMapContainerMap.get(whichGame);
+
+            ObjectOutputStream oos=new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(bestPlayerMapContainer.getName_score());
+            oos.flush();
+            oos.writeObject(bestPlayerMapContainer.getName_ranked());
+            oos.flush();
+            oos.writeObject(bestPlayerMapContainer.getName_image());
+            oos.flush();
+
+            oos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void change_profile(){
@@ -165,6 +195,7 @@ public class ClientHandler implements Runnable {
                     clientHandler.dos.writeUTF(username);
                     clientHandler.dos.flush();
                     clientHandler.is_rankedGame_started = true;
+                    thisRankedMap.remove(name);
                     return;
                 }
 
@@ -330,7 +361,7 @@ public class ClientHandler implements Runnable {
 
                     else {
                         dos.writeBoolean(true);
-                        Integer maxPlayers = Integer.valueOf(dis.readUTF());
+                        Integer maxPlayers = dis.readInt();
                         String joined_user = dis.readUTF();
                         ArrayList<String> userList = new ArrayList<>();
                         userList.add(joined_user);
