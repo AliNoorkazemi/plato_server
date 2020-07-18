@@ -39,6 +39,7 @@ public class Server {
 
             rooms.put("xo", new Room());
             rooms.put("guess word", new Room());
+            rooms.put("dots and boxes", new Room());
 
 
             Map<String, ClientHandler> xoRankedClientHandler = new ConcurrentHashMap<>();
@@ -68,7 +69,7 @@ public class Server {
 
             BestPlayerMapContainer bestPlayerMapContainerXo=new BestPlayerMapContainer();
             bestPlayerMapContainerXo.setName_score(name_score);
-            bestPlayerMapContainerXo.setName_ranked(name_score);
+            bestPlayerMapContainerXo.setName_ranked(name_ranked);
             bestPlayerMapContainerXo.setName_image(name_image);
             bestPlayerMapContainerMap.put("xo",bestPlayerMapContainerXo);
             bestPlayerMapContainerMap.put("guess word",bestPlayerMapContainerXo);

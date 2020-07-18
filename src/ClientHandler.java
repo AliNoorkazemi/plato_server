@@ -107,11 +107,11 @@ public class ClientHandler implements Runnable {
 
     private void getBestPlayer() {
         try {
-            String whichGame=dis.readUTF();
+            String whichGame = dis.readUTF();
 
-            BestPlayerMapContainer bestPlayerMapContainer=Server.bestPlayerMapContainerMap.get(whichGame);
+            BestPlayerMapContainer bestPlayerMapContainer = Server.bestPlayerMapContainerMap.get(whichGame);
 
-            ObjectOutputStream oos=new ObjectOutputStream(socket.getOutputStream());
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(bestPlayerMapContainer.getName_score());
             oos.flush();
             oos.writeObject(bestPlayerMapContainer.getName_ranked());
@@ -125,37 +125,39 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void change_profile(){
-        try{
+    private void change_profile() {
+        try {
             String current_username = dis.readUTF();
             dos.writeUTF(Server.users.get(current_username).getPassword());
             dos.flush();
             System.out.println("profile are listening ... ");
-            while (true){
+            while (true) {
                 String new_username = dis.readUTF();
                 String new_password = dis.readUTF();
-                if(Server.users.containsKey(new_username) && ! new_username.equals(current_username)){
+                if (Server.users.containsKey(new_username) && !new_username.equals(current_username)) {
                     dos.writeUTF("error");
                     dos.flush();
                     continue;
-                }else{
+                } else {
                     dos.writeUTF("ok");
                     dos.flush();
                     User changed_user = Server.users.get(current_username);
                     Server.usersClientHandler.remove(current_username);
                     Server.users.values().stream()
-                            .filter((user)-> user.getFriendName_to_message().containsKey(current_username))
-                            .forEach((user)->{user.getFriendName_to_message().put(new_username,user.getFriendName_to_message().remove(current_username));
-                            user.getFriendName_to_messageTime().put(new_username,user.getFriendName_to_messageTime().remove(current_username));
-                            user.getFriendsName_to_messageType().put(new_username,user.getFriendsName_to_messageType().remove(current_username));});
+                            .filter((user) -> user.getFriendName_to_message().containsKey(current_username))
+                            .forEach((user) -> {
+                                user.getFriendName_to_message().put(new_username, user.getFriendName_to_message().remove(current_username));
+                                user.getFriendName_to_messageTime().put(new_username, user.getFriendName_to_messageTime().remove(current_username));
+                                user.getFriendsName_to_messageType().put(new_username, user.getFriendsName_to_messageType().remove(current_username));
+                            });
                     changed_user.setUser_name(new_username);
                     changed_user.setPassword(new_password);
                     Server.users.remove(current_username);
-                    Server.users.put(new_username,changed_user);
+                    Server.users.put(new_username, changed_user);
                     break;
                 }
             }
-        }catch (IOException io){
+        } catch (IOException io) {
             io.printStackTrace();
         }
     }
@@ -164,9 +166,9 @@ public class ClientHandler implements Runnable {
         try {
             int whichGame = dis.readInt();
             Map<String, ClientHandler> thisRankedMap = Server.rankedMapContainer.get(whichGame);
-            String player=dis.readUTF();
+            String player = dis.readUTF();
             thisRankedMap.remove(player);
-            System.out.println("re: "+player+" "+ thisRankedMap.size());
+            System.out.println("re: " + player + " " + thisRankedMap.size());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -180,7 +182,7 @@ public class ClientHandler implements Runnable {
             int score = Integer.parseInt(dis.readUTF());
             String username = dis.readUTF();
             Map<String, ClientHandler> thisRankedMap = Server.rankedMapContainer.get(whichGame);
-            System.out.println("se: "+ thisRankedMap.size());
+            System.out.println("se: " + thisRankedMap.size());
             //search for a player who is waiting for play RankedGame...
             for (String name : thisRankedMap.keySet()
             ) {
@@ -207,8 +209,8 @@ public class ClientHandler implements Runnable {
             //add this user to waiting rankedGame queue
             thisRankedMap.put(username, this);
             while (!is_rankedGame_started) {
-                String str=dis.readUTF();
-                if(str.equals("cancel")){
+                String str = dis.readUTF();
+                if (str.equals("cancel")) {
                     thisRankedMap.remove(username);
                     break;
                 }
@@ -274,11 +276,11 @@ public class ClientHandler implements Runnable {
             String result = dis.readUTF();
             ClientHandler clientHandler = Server.guesswordClientHandler.get(opponent);
             System.out.println(result);
-            if ( result.equals("win"))
+            if (result.equals("win"))
                 clientHandler.dos.writeUTF("lose");
-            else if ( result.equals("lose"))
+            else if (result.equals("lose"))
                 clientHandler.dos.writeUTF("win");
-        }catch (IOException io){
+        } catch (IOException io) {
             io.printStackTrace();
         } finally {
             Server.guesswordClientHandler.remove(current_user_name);
@@ -376,8 +378,12 @@ public class ClientHandler implements Runnable {
                             target.dos.flush();
                             target.dos.writeUTF(roomName);
                             target.dos.flush();
-                            target.dos.writeUTF(userList.get(0));
+                            target.dos.writeInt(userList.size());
                             target.dos.flush();
+                            for (int i = 0; i < userList.size(); i++) {
+                                target.dos.writeUTF(userList.get(i));
+                                target.dos.flush();
+                            }
                             target.dos.writeUTF(String.valueOf(maxPlayers));
                             target.dos.flush();
                             System.out.println("add to " + user);
@@ -391,6 +397,12 @@ public class ClientHandler implements Runnable {
                     String room_name = dis.readUTF();
                     String user_thats_want_to_join = dis.readUTF();
                     Server.rooms.get(whichGame).getRoomName_to_joined_user().get(room_name).add(user_thats_want_to_join);
+                    boolean is_dotsAndBoxes_start = false;
+                    if (whichGame.equals("dots and boxes")) {
+                        if (Server.rooms.get(whichGame).getRoomName_to_joined_user().get(room_name).size() == Server.rooms.get(whichGame).getRoomName_to_maxPlayer().get(room_name)) {
+                            is_dotsAndBoxes_start = true;
+                        }
+                    }
                     for (String username : Server.usersClientHandlerInGameUpdate.keySet()
                     ) {
                         ClientHandler target = Server.usersClientHandlerInGameUpdate.get(username);
@@ -400,6 +412,15 @@ public class ClientHandler implements Runnable {
                         target.dos.flush();
                         target.dos.writeUTF(user_thats_want_to_join);
                         target.dos.flush();
+                        if (whichGame.equals("dots and boxes")) {
+                            if (is_dotsAndBoxes_start) {
+                                target.dos.writeUTF("start");
+                                target.dos.flush();
+                            } else {
+                                target.dos.writeUTF("resume");
+                                target.dos.flush();
+                            }
+                        }
                     }
 
                     break;
@@ -461,7 +482,7 @@ public class ClientHandler implements Runnable {
                 } else if (Server.users.containsKey(message)) {
                     dos.writeUTF("Duplicated");
                     dos.flush();
-                }else{
+                } else {
                     dos.writeUTF("ok");
                     dos.flush();
                 }
@@ -499,8 +520,8 @@ public class ClientHandler implements Runnable {
                 dos.flush();
                 for (int i = 0; i < array.length; i++) {
                     dos.writeByte(array[i]);
-                    dos.flush();
                 }
+                dos.flush();
                 break;
             }
         } catch (IOException io) {
