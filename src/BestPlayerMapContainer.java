@@ -1,4 +1,5 @@
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BestPlayerMapContainer {
 
@@ -7,6 +8,8 @@ public class BestPlayerMapContainer {
     private Map<String,Integer> name_ranked;
 
     public Map<String, Integer> getName_score() {
+        if ( name_score==null)
+            name_score = new ConcurrentHashMap<>();
         return name_score;
     }
 
@@ -15,6 +18,8 @@ public class BestPlayerMapContainer {
     }
 
     public Map<String, byte[]> getName_image() {
+        if ( name_image == null)
+            name_image = new ConcurrentHashMap<>();
         return name_image;
     }
 
@@ -23,6 +28,8 @@ public class BestPlayerMapContainer {
     }
 
     public Map<String, Integer> getName_ranked() {
+        if ( name_ranked==null)
+            name_ranked = new ConcurrentHashMap<>();
         return name_ranked;
     }
 

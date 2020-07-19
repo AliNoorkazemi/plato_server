@@ -148,6 +148,7 @@ public class ClientHandler implements Runnable {
             }
             boolean is_game_finished = dis.readBoolean();
             if (is_game_finished ){
+                System.out.println("game finished.................................");
                 Map<String,Integer> scores = new HashMap<>();
                 for (int i = 0; i < size ; i++) {
                     ClientHandler clientHandler = Server.dostandboxesClientHandler.get(members.get(i));
@@ -155,15 +156,18 @@ public class ClientHandler implements Runnable {
                     clientHandler.dos.flush();
                     scores.put(members.get(i),clientHandler.dis.readInt());
                 }
+                System.out.println("finish sent to all members of game ...............................");
                 List<String> sorted_names = scores.entrySet().stream()
                         .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
                         .map(Map.Entry::getKey)
                         .collect(Collectors.toList());
+                System.out.println("winner is : "+ sorted_names.get(0)+ " ...................");
                 for (int i = 0; i < size; i++) {
                     ClientHandler clientHandler = Server.dostandboxesClientHandler.get(members.get(i));
                     clientHandler.dos.writeUTF(sorted_names.get(0));
                     clientHandler.dos.flush();
                 }
+                System.out.println("winner sent to all members ................................");
             }
         }catch (IOException io){
             io.printStackTrace();
@@ -179,6 +183,7 @@ public class ClientHandler implements Runnable {
                 if ( dis.readUTF().equals("exit"))
                     break;
             }
+            System.out.println("listening of dots and boxes game finished .....................................");
         }catch (IOException io){
             io.printStackTrace();
         }
