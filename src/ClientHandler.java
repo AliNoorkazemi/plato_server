@@ -118,6 +118,7 @@ public class ClientHandler implements Runnable {
                 members.add(dis.readUTF());
             }
             int position = dis.readInt();
+            System.out.println("the position to change is : " + position);
             String location_line = dis.readUTF();
             int color = dis.readInt();
             for (int i = 0; i < size; i++) {
@@ -127,6 +128,7 @@ public class ClientHandler implements Runnable {
                 clientHandler.dos.writeUTF("change");
                 clientHandler.dos.flush();
                 clientHandler.dos.writeInt(position);
+                System.out.println("the position to change that send to members is : " + position);
                 clientHandler.dos.flush();
                 clientHandler.dos.writeUTF(location_line);
                 clientHandler.dos.flush();
