@@ -16,6 +16,7 @@ public class Server {
     static Map<String, ClientHandler> usersClientHandlerInGameUpdate = new ConcurrentHashMap<>();
     static Map<String, ClientHandler> usersClientHandlerInGameAdd = new ConcurrentHashMap<>();
     static Map<String, ClientHandler> xoClientHandler = new ConcurrentHashMap<>();
+    static Map<String , ClientHandler> dostandboxesClientHandler = new ConcurrentHashMap<>();
     static Map<String, ClientHandler> guesswordClientHandler = new ConcurrentHashMap<>();
     static Map<String, User> users = new ConcurrentHashMap<>();
     static Map<String, Room> rooms = new ConcurrentHashMap<>();// <gamename,room>

@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class ClientHandler implements Runnable {
 
@@ -91,6 +92,12 @@ public class ClientHandler implements Runnable {
                 case "changeBestPlayer":
                     changeBestPlayer();
                     break;
+                case "dots and boxes message listener":
+                    dost_and_boxes_listening();
+                    break;
+                case "dots and boxes sender":
+                    dots_and_boxes_send();
+                    break;
 
             }
         } catch (IOException io) {
@@ -99,6 +106,82 @@ public class ClientHandler implements Runnable {
         }
 
         System.out.println("purpose done ... ");
+    }
+
+    private void dots_and_boxes_send(){
+        String current_username ;
+        try{
+            current_username = dis.readUTF();
+            ArrayList<String> members = new ArrayList<>();
+            int size = dis.readInt();
+            for (int i = 0; i < size; i++) {
+                members.add(dis.readUTF());
+            }
+            int position = dis.readInt();
+            String location_line = dis.readUTF();
+            int color = dis.readInt();
+            for (int i = 0; i < size; i++) {
+                if ( members.get(i).equals(current_username))
+                    continue;
+                ClientHandler clientHandler = Server.dostandboxesClientHandler.get(members.get(i));
+                clientHandler.dos.writeUTF("change");
+                clientHandler.dos.flush();
+                clientHandler.dos.writeInt(position);
+                clientHandler.dos.flush();
+                clientHandler.dos.writeUTF(location_line);
+                clientHandler.dos.flush();
+                clientHandler.dos.writeInt(color);
+                clientHandler.dos.flush();
+            }
+            boolean is_prize = dis.readBoolean();
+            if ( !is_prize) {
+                int index = members.indexOf(current_username);
+                if (index == members.size() - 1) {
+                    ClientHandler clientHandler = Server.dostandboxesClientHandler.get(members.get(0));
+                    clientHandler.dos.writeUTF("your turn");
+                    clientHandler.dos.flush();
+                } else {
+                    ClientHandler clientHandler = Server.dostandboxesClientHandler.get(members.get(index + 1));
+                    clientHandler.dos.writeUTF("your turn");
+                    clientHandler.dos.flush();
+                }
+            }
+            boolean is_game_finished = dis.readBoolean();
+            if (is_game_finished ){
+                Map<String,Integer> scores = new HashMap<>();
+                for (int i = 0; i < size ; i++) {
+                    ClientHandler clientHandler = Server.dostandboxesClientHandler.get(members.get(i));
+                    clientHandler.dos.writeUTF("finish");
+                    clientHandler.dos.flush();
+                    scores.put(members.get(i),clientHandler.dis.readInt());
+                }
+                List<String> sorted_names = scores.entrySet().stream()
+                        .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                        .map(Map.Entry::getKey)
+                        .collect(Collectors.toList());
+                for (int i = 0; i < size; i++) {
+                    ClientHandler clientHandler = Server.dostandboxesClientHandler.get(members.get(i));
+                    clientHandler.dos.writeUTF(sorted_names.get(0));
+                    clientHandler.dos.flush();
+                }
+            }
+        }catch (IOException io){
+            io.printStackTrace();
+        }
+    }
+
+    private void dost_and_boxes_listening(){
+        String current_username ;
+        try{
+            current_username = dis.readUTF();
+            Server.dostandboxesClientHandler.put(current_username,this);
+            while (true){
+                if ( dis.readUTF().equals("exit"))
+                    break;
+            }
+        }catch (IOException io){
+            io.printStackTrace();
+        }
     }
 
     private void changeBestPlayer() {
