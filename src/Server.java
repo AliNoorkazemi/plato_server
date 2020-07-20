@@ -4,7 +4,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Server {
@@ -19,7 +18,9 @@ public class Server {
     static Map<String, User> users = new ConcurrentHashMap<>();
     static Map<String, Room> rooms = new ConcurrentHashMap<>();// <gamename,room>
     static Map<String,BestPlayerMapContainer> bestPlayerMapContainerMap =new ConcurrentHashMap<>();
-    private static FileOutputStream fos;
+    private static FileOutputStream fos_users;
+    private static FileOutputStream fos_best_players;
+
 
     public static void main(String[] args) {
 
@@ -28,12 +29,26 @@ public class Server {
             Add Users to server by read from Users.txt file .
              */
 
-            FileOutputStream fos = new FileOutputStream("Users.txt");
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(users);
-            oos.flush();
-            oos.close();
-            fos.close();
+//            FileOutputStream fos = new FileOutputStream("Users.txt");
+//            ObjectOutputStream oos = new ObjectOutputStream(fos);
+//            oos.writeObject(users);
+//            oos.flush();
+//            oos.close();
+//            fos.close();
+
+//            FileOutputStream fos = new FileOutputStream("BestPlayer.txt");
+//            ObjectOutputStream oos = new ObjectOutputStream(fos);
+//            oos.writeObject(bestPlayerMapContainerMap);
+//            oos.flush();
+//            oos.close();
+//            fos.close();
+
+
+            FileInputStream file1 = new FileInputStream("BestPlayer.txt");
+            ObjectInputStream ois1 = new ObjectInputStream(file1);
+            bestPlayerMapContainerMap = (ConcurrentHashMap) ois1.readObject();
+            file1.close();
+            ois1.close();
 
             FileInputStream file = new FileInputStream("Users.txt");
             ObjectInputStream ois = new ObjectInputStream(file);
@@ -93,15 +108,30 @@ public class Server {
     }
 
     static synchronized  void write_users_in_file(){
-        fos = null;
+        fos_users = null;
         ObjectOutputStream oos = null;
         try {
-            fos = new FileOutputStream("Users.txt");
-            oos = new ObjectOutputStream(fos);
+            fos_users = new FileOutputStream("Users.txt");
+            oos = new ObjectOutputStream(fos_users);
             oos.writeObject(users);
             oos.flush();
             oos.close();
-            fos.close();
+            fos_users.close();
+        }catch (IOException io){
+            io.printStackTrace();
+        }
+    }
+
+    static synchronized  void write_best_players_in_file(){
+        fos_best_players = null;
+        ObjectOutputStream oos = null;
+        try {
+            fos_best_players = new FileOutputStream("BestPlayer.txt");
+            oos = new ObjectOutputStream(fos_best_players);
+            oos.writeObject(users);
+            oos.flush();
+            oos.close();
+            fos_best_players.close();
         }catch (IOException io){
             io.printStackTrace();
         }

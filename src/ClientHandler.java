@@ -630,7 +630,6 @@ public class ClientHandler implements Runnable {
         try {
             String current_userName = dis.readUTF();
             User current_user = Server.users.get(current_userName);
-            System.out.println(current_user.getFriendName_to_message().keySet());
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(current_user.getFriendName_to_message());
             oos.flush();
