@@ -201,8 +201,6 @@ public class ClientHandler implements Runnable {
             oos.flush();
             oos.writeObject(bestPlayerMapContainer.getName_image());
             oos.flush();
-            oos.writeObject(bestPlayerMapContainer.getName_image());
-            oos.flush();
 
             oos.close();
         } catch (IOException e) {
