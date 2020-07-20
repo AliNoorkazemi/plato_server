@@ -741,6 +741,7 @@ public class ClientHandler implements Runnable {
             String name = dis.readUTF();
             Server.usersClientHandler.get(name).socket.close();
             Server.usersClientHandler.remove(name);
+            Server.write_users_in_file();
         } catch (IOException io) {
             io.printStackTrace();
         }

@@ -1,6 +1,4 @@
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -21,6 +19,7 @@ public class Server {
     static Map<String, User> users = new ConcurrentHashMap<>();
     static Map<String, Room> rooms = new ConcurrentHashMap<>();// <gamename,room>
     static Map<String,BestPlayerMapContainer> bestPlayerMapContainerMap =new ConcurrentHashMap<>();
+    private static FileOutputStream fos;
 
     public static void main(String[] args) {
 
@@ -28,6 +27,14 @@ public class Server {
             /*
             Add Users to server by read from Users.txt file .
              */
+
+            FileOutputStream fos = new FileOutputStream("Users.txt");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(users);
+            oos.flush();
+            oos.close();
+            fos.close();
+
             FileInputStream file = new FileInputStream("Users.txt");
             ObjectInputStream ois = new ObjectInputStream(file);
             users = (ConcurrentHashMap) ois.readObject();
@@ -81,6 +88,21 @@ public class Server {
 
 
         } catch (IOException | ClassNotFoundException io) {
+            io.printStackTrace();
+        }
+    }
+
+    static synchronized  void write_users_in_file(){
+        fos = null;
+        ObjectOutputStream oos = null;
+        try {
+            fos = new FileOutputStream("Users.txt");
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(users);
+            oos.flush();
+            oos.close();
+            fos.close();
+        }catch (IOException io){
             io.printStackTrace();
         }
     }
