@@ -8,7 +8,7 @@ public class User implements Serializable {
 
     private String user_name;
     private String password;
-    private byte[] profile;
+    private String profile;
     private ArrayList<Integer> gameScore;
 
     public User(){
@@ -33,17 +33,28 @@ public class User implements Serializable {
     }
 
 
-    public byte[] getProfile() {
+    public String getProfile() {
         return profile;
     }
 
-    public void setProfile(byte[] profile) {
+    public void setProfile(String profile) {
         this.profile = profile;
     }
 
     Map<String,ArrayList<String>> friendName_to_message ;
     Map<String,ArrayList<Date>> friendName_to_messageTime;
     Map<String,ArrayList<Integer>> friendsName_to_messageType;
+    Map<String,String> friendName_to_profile ;
+
+    public Map<String, String> getFriendName_to_profile() {
+        if(friendName_to_profile==null)
+            friendName_to_profile=new ConcurrentHashMap<>();
+        return friendName_to_profile;
+    }
+
+    public void setFriendName_to_profile(Map<String, String> friendName_to_profile) {
+        this.friendName_to_profile = friendName_to_profile;
+    }
 
     public Map<String, ArrayList<Integer>> getFriendsName_to_messageType() {
         if(friendsName_to_messageType==null)

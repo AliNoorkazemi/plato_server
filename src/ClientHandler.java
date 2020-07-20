@@ -1,3 +1,4 @@
+import javax.management.ObjectName;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
@@ -198,7 +199,7 @@ public class ClientHandler implements Runnable {
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(bestPlayerMapContainer.getName_score());
             oos.flush();
-            oos.writeObject(bestPlayerMapContainer.getName_ranked());
+            oos.writeObject(bestPlayerMapContainer.getName_image());
             oos.flush();
             oos.writeObject(bestPlayerMapContainer.getName_image());
             oos.flush();
@@ -312,6 +313,27 @@ public class ClientHandler implements Runnable {
             int gameIndex = dis.readInt();
             int score = dis.readInt();
             user.getGameScore().set(gameIndex, score);
+            String which_game = null;
+            if (gameIndex == 0)
+                which_game = "xo";
+            else if (gameIndex == 1)
+                which_game = "guess word";
+            else
+                which_game = "dots and boxes";
+
+            BestPlayerMapContainer bestPlayerMapContainer = Server.bestPlayerMapContainerMap.get(which_game);
+            if (bestPlayerMapContainer.getName_score().size() < 10) {
+                bestPlayerMapContainer.getName_score().put(username, score);
+                // bestPlayerMapContainer.getName_image().put(username, Server.users.get(username).getProfile());
+            } else {
+                Map.Entry<String, Integer> minEntry = bestPlayerMapContainer.getName_score().entrySet().stream().min(Map.Entry.comparingByValue()).get();
+                if (minEntry.getValue() < score) {
+                    bestPlayerMapContainer.getName_score().remove(minEntry.getKey());
+                    bestPlayerMapContainer.getName_image().remove(minEntry.getKey());
+                    bestPlayerMapContainer.getName_score().put(username, score);
+                    //   bestPlayerMapContainer.getName_image().put(username, Server.users.get(username).getProfile());
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -547,21 +569,14 @@ public class ClientHandler implements Runnable {
                     User newUser = new User();
                     newUser.setUser_name(dis.readUTF());
                     newUser.setPassword(dis.readUTF());
-                    user = newUser;
 
-                    int length = dis.readInt();
-                    byte[] arr = new byte[length];
+                    ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                    String prof = (String) ois.readObject();
 
-                    for (int i = 0; i < length; i++) {
-                        arr[i] = dis.readByte();
-                    }
-                    //ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    //baos.write(arr, 0, dis.read(arr));
-
-                    newUser.setProfile(arr);
-
+                    newUser.setProfile(prof);
 
                     Server.users.put(newUser.getUser_name(), newUser);
+                    user = newUser;
                     break;
                 } else if (Server.users.containsKey(message)) {
                     dos.writeUTF("Duplicated");
@@ -571,7 +586,7 @@ public class ClientHandler implements Runnable {
                     dos.flush();
                 }
             }
-        } catch (IOException io) {
+        } catch (IOException | ClassNotFoundException io) {
             io.printStackTrace();
         }
     }
@@ -599,13 +614,11 @@ public class ClientHandler implements Runnable {
                 dos.writeUTF("OK");
                 dos.flush();
                 this.user = Server.users.get(userName);
-                byte[] array = Server.users.get(userName).getProfile();
-                dos.writeInt(array.length);
+
+                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                oos.writeObject(Server.users.get(userName).getProfile());
                 dos.flush();
-                for (int i = 0; i < array.length; i++) {
-                    dos.writeByte(array[i]);
-                }
-                dos.flush();
+
                 break;
             }
         } catch (IOException io) {
@@ -627,12 +640,15 @@ public class ClientHandler implements Runnable {
             oos.flush();
             oos.writeObject(current_user.getGameScore());
             oos.flush();
+            oos.writeObject(current_user.getFriendName_to_profile());
+            oos.flush();
         } catch (IOException io) {
             io.printStackTrace();
         }
     }
 
 
+    //haji alan koja haro okey konm???????????????????????????
     private void addFriend() {
         try {
             String targetName = dis.readUTF();
@@ -647,10 +663,19 @@ public class ClientHandler implements Runnable {
                     user.friendName_to_message = new ConcurrentHashMap<>();
                     user.friendName_to_messageTime = new ConcurrentHashMap<>();
                     user.friendsName_to_messageType = new ConcurrentHashMap<>();
+                    user.friendName_to_profile=new ConcurrentHashMap<>();
                 }
+
                 user.friendName_to_message.put(targetName, new ArrayList<String>());
                 user.friendName_to_messageTime.put(targetName, new ArrayList<Date>());
                 user.friendsName_to_messageType.put(targetName, new ArrayList<Integer>());
+                user.friendName_to_profile.put(targetName,Server.users.get(targetName).getProfile());
+
+                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                oos.writeObject(Server.users.get(targetName).getProfile());
+                oos.flush();
+
+                dos = new DataOutputStream(socket.getOutputStream());
             }
         } catch (IOException io) {
             io.printStackTrace();
@@ -664,6 +689,7 @@ public class ClientHandler implements Runnable {
             String target_name = dis.readUTF();
             String message = dis.readUTF();
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+
             Date time = (Date) ois.readObject();
             if (Server.usersClientHandler.containsKey(target_name)) {
                 ClientHandler target = Server.usersClientHandler.get(target_name);
@@ -672,6 +698,14 @@ public class ClientHandler implements Runnable {
                 target.dos.writeUTF(message);
                 target.dos.flush();
                 ObjectOutputStream oos = new ObjectOutputStream(target.socket.getOutputStream());
+                boolean is_first=target.dis.readBoolean();
+                System.out.println("sad");
+                if (is_first) {
+                    oos.writeObject(Server.users.get(current_name).getProfile());
+                    System.out.println("isfirs");
+                    oos.flush();
+                    Server.users.get(target_name).getFriendName_to_profile().put(current_name,Server.users.get(current_name).getProfile());
+                }
                 oos.writeObject(time);
                 oos.flush();
                 target.dis = new DataInputStream(target.socket.getInputStream());

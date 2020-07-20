@@ -53,8 +53,7 @@ public class Server {
 
             //test
             Map<String,Integer> name_score=new HashMap<>();
-            Map<String,Integer> name_ranked=new HashMap<>();
-            Map<String,byte[]> name_image=new HashMap<>();
+            Map<String,String> name_image=new HashMap<>();
 
             name_score.put("Ali",65);
             name_score.put("javad",55);
@@ -62,19 +61,15 @@ public class Server {
             name_score.put("reza",40);
             name_score.put("nahid",30);
 
-            name_ranked.put("Ali",1);
-            name_ranked.put("javad",2);
-            name_ranked.put("mohammad",3);
-            name_ranked.put("reza",4);
-            name_ranked.put("nahid",5);
 
             BestPlayerMapContainer bestPlayerMapContainerXo=new BestPlayerMapContainer();
+            BestPlayerMapContainer bestPlayerMapContainerGuessWord=new BestPlayerMapContainer();
+            BestPlayerMapContainer bestPlayerMapContainerDotesAndBox=new BestPlayerMapContainer();
             bestPlayerMapContainerXo.setName_score(name_score);
-            bestPlayerMapContainerXo.setName_ranked(name_ranked);
             bestPlayerMapContainerXo.setName_image(name_image);
             bestPlayerMapContainerMap.put("xo",bestPlayerMapContainerXo);
-            bestPlayerMapContainerMap.put("guess word",bestPlayerMapContainerXo);
-            bestPlayerMapContainerMap.put("dotAndBox",bestPlayerMapContainerXo);
+            bestPlayerMapContainerMap.put("guess word",bestPlayerMapContainerGuessWord);
+            bestPlayerMapContainerMap.put("dots and boxes",bestPlayerMapContainerDotesAndBox);
 
 
             while (true) {
