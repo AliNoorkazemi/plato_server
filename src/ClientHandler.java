@@ -324,14 +324,16 @@ public class ClientHandler implements Runnable {
             BestPlayerMapContainer bestPlayerMapContainer = Server.bestPlayerMapContainerMap.get(which_game);
             if (bestPlayerMapContainer.getName_score().size() < 10) {
                 bestPlayerMapContainer.getName_score().put(username, score);
-                // bestPlayerMapContainer.getName_image().put(username, Server.users.get(username).getProfile());
+                 bestPlayerMapContainer.getName_image().put(username, Server.users.get(username).getProfile());
+                Server.write_best_players_in_file();
             } else {
                 Map.Entry<String, Integer> minEntry = bestPlayerMapContainer.getName_score().entrySet().stream().min(Map.Entry.comparingByValue()).get();
                 if (minEntry.getValue() < score) {
                     bestPlayerMapContainer.getName_score().remove(minEntry.getKey());
                     bestPlayerMapContainer.getName_image().remove(minEntry.getKey());
                     bestPlayerMapContainer.getName_score().put(username, score);
-                    //   bestPlayerMapContainer.getName_image().put(username, Server.users.get(username).getProfile());
+                    bestPlayerMapContainer.getName_image().put(username, Server.users.get(username).getProfile());
+                    Server.write_best_players_in_file();
                 }
             }
         } catch (IOException e) {
@@ -710,7 +712,7 @@ public class ClientHandler implements Runnable {
                 target.dis = new DataInputStream(target.socket.getInputStream());
                 System.out.println("message sent to online user ...");
             }
-            Server.users.get(target_name).receive_message(message, time, current_name);
+            Server.users.get(target_name).receive_message(message, time, current_name ,Server.users.get(current_name).getProfile());
             Server.users.get(current_name).friendsName_to_messageType.get(target_name).add(1);
             Server.users.get(current_name).friendName_to_messageTime.get(target_name).add(time);
             Server.users.get(current_name).friendName_to_message.get(target_name).add(message);

@@ -1,5 +1,6 @@
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -90,11 +91,12 @@ public class User implements Serializable {
         this.user_name = user_name;
     }
 
-    public void receive_message(String message,Date date,String sender ){
+    public void receive_message(String message,Date date,String sender,String profile ){
         if(friendName_to_message==null) {
             friendName_to_message = new ConcurrentHashMap<String, ArrayList<String>>();
             friendName_to_messageTime = new ConcurrentHashMap<String , ArrayList<Date>>();
             friendsName_to_messageType = new ConcurrentHashMap<>();
+            friendName_to_profile  = new ConcurrentHashMap<>();
         }
         if(friendName_to_message.containsKey(sender)){
             friendName_to_message.get(sender).add(message);
@@ -110,6 +112,7 @@ public class User implements Serializable {
             ArrayList<Date> new_date_list = new ArrayList<Date>();
             new_date_list.add(date);
             friendName_to_messageTime.put(sender,new_date_list);
+            friendName_to_profile.put(sender,profile);
         }
     }
 }

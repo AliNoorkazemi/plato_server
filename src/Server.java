@@ -128,7 +128,7 @@ public class Server {
         try {
             fos_best_players = new FileOutputStream("BestPlayer.txt");
             oos = new ObjectOutputStream(fos_best_players);
-            oos.writeObject(users);
+            oos.writeObject(bestPlayerMapContainerMap);
             oos.flush();
             oos.close();
             fos_best_players.close();

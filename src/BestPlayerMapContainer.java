@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class BestPlayerMapContainer {
+public class BestPlayerMapContainer implements Serializable {
 
     private Map<String,Integer> name_score;
     private Map<String,String> name_image;
