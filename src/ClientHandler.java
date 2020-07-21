@@ -232,6 +232,7 @@ public class ClientHandler implements Runnable {
                                 user.getFriendName_to_message().put(new_username, user.getFriendName_to_message().remove(current_username));
                                 user.getFriendName_to_messageTime().put(new_username, user.getFriendName_to_messageTime().remove(current_username));
                                 user.getFriendsName_to_messageType().put(new_username, user.getFriendsName_to_messageType().remove(current_username));
+                                user.getFriendName_to_profile().put(new_username,user.getFriendName_to_profile().remove(current_username));
                             });
                     changed_user.setUser_name(new_username);
                     changed_user.setPassword(new_password);
@@ -714,6 +715,8 @@ public class ClientHandler implements Runnable {
             Server.users.get(current_name).friendsName_to_messageType.get(target_name).add(1);
             Server.users.get(current_name).friendName_to_messageTime.get(target_name).add(time);
             Server.users.get(current_name).friendName_to_message.get(target_name).add(message);
+            if (! Server.users.get(current_name).getFriendName_to_profile().containsKey(target_name))
+                Server.users.get(current_name).getFriendName_to_profile().put(target_name,Server.users.get(target_name).getProfile());
         } catch (IOException | ClassNotFoundException io) {
             io.printStackTrace();
         }
